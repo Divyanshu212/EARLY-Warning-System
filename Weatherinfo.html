@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Weather App</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.4s ease;
+            gap: 20px;
+        }
+
+        .weather-section {
+            flex: 1;
+            padding: 20px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+            transition: background 1.5s ease;
+        }
+
+        .weather-info {
+            text-align: center;
+            position: relative;
+        }
+
+        .city-info {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: fadeIn 1s ease;
+        }
+
+        .icon img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .temperature {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: opacity 1s ease;
+        }
+
+        .time, .date {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+
+        .search-section {
+            background-color: #d7dce0;
+            padding: 20px;
+            color: rgb(14, 4, 4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            margin-right: 10px;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #e67e22;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+            transition: background-color 0.4s ease, transform 0.4s ease;
+        }
+
+        button:hover {
+            background-color: #d35400;
+            transform: translateY(-5px);
+        }
+
+        .additional-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .additional-info p {
+            margin: 15px 0;
+            font-size: 1.2rem;
+            animation: fadeIn 2s ease;
+        }
+
+        .cards-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .card {
+            height: 300px;
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .cards-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="weather-section animated-bg">
+            <div class="weather-info">
+                <div id="city" class="city-info"></div>
+                <div id="icon" class="icon animate-icon"></div>
+                <div id="currentTime" class="time"></div>
+                <div id="currentDate" class="date"></div>
+                <div id="temperature" class="temperature"></div>
+            </div>
+        </div>
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="cityInput" placeholder="Enter City Name">
+                <button id="searchButton" class="btn-animate">Search</button>
+            </div>
+            <div class="additional-info">
+                <p id="weatherDescription"></p>
+                <p id="visibility"></p>
+                <p id="windSpeed"></p>
+            </div>
+        </div>
+        <div class="cards-row">
+            <div class="card">
+                <h3>Temperature</h3>
+                <canvas id="temperatureChart"></canvas>
+            </div>
+            <div class="card">
+                <h3>Pressure</h3>
+                <canvas id="pressureChart"></canvas>
+            </div>
+        </div>
+        <div class="cards-row">
+            <div class="card">
+                <h3>Rainfall</h3>
+                <canvas id="rainfallChart"></canvas>
+            </div>
+            <div class="card">
+                <h3>Wind Speed</h3>
+                <canvas id="windSpeedChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        const apiKey = '4bf08d738152637dc0760b7d00532cef';
+
+        // DOM Elements
+        const cityInput = document.getElementById('cityInput');
+        const searchButton = document.getElementById('searchButton');
+        const cityElement = document.getElementById('city');
+        const temperatureElement = document.getElementById('temperature');
+        const iconElement = document.getElementById('icon');
+        const currentTimeElement = document.getElementById('currentTime');
+        const currentDateElement = document.getElementById('currentDate');
+        const weatherDescriptionElement = document.getElementById('weatherDescription');
+        const visibilityElement = document.getElementById('visibility');
+        const windSpeedElement = document.getElementById('windSpeed');
+        const weatherSection = document.querySelector('.weather-section');
+
+        // Chart.js Initialization
+        const temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+        const rainfallCtx = document.getElementById('rainfallChart').getContext('2d');
+        const pressureCtx = document.getElementById('pressureChart').getContext('2d');
+        const windSpeedCtx = document.getElementById('windSpeedChart').getContext('2d');
+
+        const temperatureChart = new Chart(temperatureCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    borderColor: 'rgba(255, 99, 132, 0.2)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    data: []
+                }]
+            }
+        });
+
+        const rainfallChart = new Chart(rainfallCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Rainfall (mm)',
+                    borderColor: 'rgba(54, 162, 235, 0.2)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    data: []
+                }]
+            }
+        });
+
+        const pressureChart = new Chart(pressureCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Pressure (hPa)',
+                    borderColor: 'rgba(255, 206, 86, 0.2)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    data: []
+                }]
+            }
+        });
+
+        const windSpeedChart = new Chart(windSpeedCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Wind Speed (m/s)',
+                    borderColor: 'rgba(75, 192, 192, 0.2)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    data: []
+                }]
+            }
+        });
+
+        // Event Listener for Search Button
+        searchButton.addEventListener('click', () => {
+            const city = cityInput.value;
+            if (city) {
+                fetchWeatherByCity(city);
+            }
+        });
+
+        // Fetch weather by city name
+        function fetchWeatherByCity(city) {
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Update weather information
+                    cityElement.textContent = data.name;
+                    temperatureElement.textContent = `${Math.round(data.main.temp)}°C`;
+                    weatherDescriptionElement.textContent = `Weather: ${data.weather[0].description}`;
+                    visibilityElement.textContent = `Visibility: ${data.visibility / 1000} km`;
+                    windSpeedElement.textContent = `Wind Speed: ${data.wind.speed} m/s`;
+                    
+                    // Update date and time
+                    const now = new Date();
+                    currentTimeElement.textContent = now.toLocaleTimeString();
+                    currentDateElement.textContent = now.toLocaleDateString();
+
+                    // Update weather icon
+                    iconElement.innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="${data.weather[0].description}">`;
+
+                    // Update charts with fake data
+                    const labels = Array.from({ length: 10 }, (_, i) => `Day ${i + 1}`);
+                    const temperatureData = Array.from({ length: 10 }, () => Math.random() * 30);
+                    const rainfallData = Array.from({ length: 10 }, () => Math.random() * 100);
+                    const pressureData = Array.from({ length: 10 }, () => 1000 + Math.random() * 50);
+                    const windSpeedData = Array.from({ length: 10 }, () => Math.random() * 15);
+
+                    temperatureChart.data.labels = labels;
+                    temperatureChart.data.datasets[0].data = temperatureData;
+                    temperatureChart.update();
+
+                    rainfallChart.data.labels = labels;
+                    rainfallChart.data.datasets[0].data = rainfallData;
+                    rainfallChart.update();
+
+                    pressureChart.data.labels = labels;
+                    pressureChart.data.datasets[0].data = pressureData;
+                    pressureChart.update();
+
+                    windSpeedChart.data.labels = labels;
+                    windSpeedChart.data.datasets[0].data = windSpeedData;
+                    windSpeedChart.update();
+                })
+                .catch(error => console.error('Error fetching weather data:', error));
+        }
+    </script>
+</body>
+</html>

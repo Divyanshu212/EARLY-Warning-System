@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icewatcher - Sign Up / Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f7f7f7, #e2e2e2);
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 20px;
+            background: #007bff;
+            color: #fff;
+            border-bottom: 2px solid #0056b3;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .form-container {
+            padding: 20px;
+        }
+
+        .form-inner {
+            position: relative;
+            width: 100%;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: #eee;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .form {
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .form-footer label {
+            font-size: 14px;
+        }
+
+        .form-footer a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Icewatcher</h1>
+        </div>
+        <div class="form-container">
+            <div class="form-inner">
+                <div class="form-header">
+                    <button class="tab-btn active" data-form="login">Login</button>
+                    <button class="tab-btn" data-form="signup">Sign Up</button>
+                </div>
+                <form id="login-form" class="form active">
+                    <h2>Login</h2>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <div class="form-footer">
+                        <label><input type="checkbox"> Remember Me</label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <form id="signup-form" class="form">
+                    <h2>Sign Up</h2>
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <input type="text" placeholder="Phone Number" required>
+                    <input type="text" placeholder="Address" required>
+                    <input type="date" placeholder="Date of Birth" required>
+                    <div class="form-footer">
+                        <label><input type="checkbox"> I agree to the Terms & Conditions</label>
+                    </div>
+                    <button type="submit">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const forms = document.querySelectorAll('.form');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetForm = document.querySelector(`#${button.dataset.form}-form`);
+                    
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    forms.forEach(form => form.classList.remove('active'));
+                    targetForm.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

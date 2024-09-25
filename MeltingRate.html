@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melting Rate Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #cf7373, #61bee9);
+            color: #333;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #ffffff, #f1f1f1);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            font-size: 1.75em;
+            margin: 20px;
+            color: #4a90e2;
+            text-align: center;
+        }
+
+        .card p {
+            font-size: 1.2em;
+            color: #555;
+            margin: 0 20px 20px;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        canvas {
+            width: 100%;
+            height: 250px;
+        }
+
+        /* Button styling for future use */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #4a90e2;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .button:hover {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card h2 {
+                font-size: 1.5em;
+            }
+            .card p {
+                font-size: 1em;
+            }
+        }
+
+        /* Alert Card Styling */
+        .alert-card {
+            position: fixed;
+            bottom: 20px; /* Positioned at the bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Initially hidden */
+            text-align: center;
+        }
+
+        .alert-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .alert-card p {
+            margin-bottom: 20px;
+        }
+
+        .alert-card #alert-close {
+            background: #721c24;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .alert-card #alert-close:hover {
+            background: #5c161a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="temperature-card">
+            <h2>Temperature Data (Temperature Monitoring)</h2>
+            <p id="temperature-text">Loading...</p>
+            <canvas id="temperature-chart"></canvas>
+        </div>
+        <div class="card" id="ice-thickness-card">
+            <h2>Snow and Ice Thickness</h2>
+            <p id="ice-thickness-text">Loading...</p>
+            <canvas id="ice-thickness-chart"></canvas>
+        </div>
+        <div class="card" id="mass-balance-card">
+            <h2>Mass Balance Data</h2>
+            <p id="mass-balance-text">Loading...</p>
+            <canvas id="mass-balance-chart"></canvas>
+        </div>
+        <div class="card" id="sea-level-card">
+            <h2>Sea Level Rise</h2>
+            <p id="sea-level-text">Loading...</p>
+            <canvas id="sea-level-chart"></canvas>
+        </div>
+        <div class="card" id="precipitation-card">
+            <h2>Precipitation Data</h2>
+            <p id="precipitation-text">Loading...</p>
+            <canvas id="precipitation-chart"></canvas>
+        </div>
+        <div class="card" id="albedo-card">
+            <h2>Albedo (Reflectivity) Changes</h2>
+            <p id="albedo-text">Loading...</p>
+            <canvas id="albedo-chart"></canvas>
+        </div>
+        <div class="card" id="streamflow-card">
+            <h2>Streamflow and River Discharge Data</h2>
+            <p id="streamflow-text">Loading...</p>
+            <canvas id="streamflow-chart"></canvas>
+        </div>
+        <div class="card" id="melt-ponds-card">
+            <h2>Surface Melt Ponds and Lakes Formation</h2>
+            <p id="melt-ponds-text">Loading...</p>
+            <canvas id="melt-ponds-chart"></canvas>
+        </div>
+    </div>
+
+    <div id="alert-card" class="alert-card">
+        <h2>Risk Alert!</h2>
+        <p id="alert-message">Dangerous data detected. Immediate action required!</p>
+        <button id="alert-close" class="button">Close</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function generateRandomData(length) {
+                return Array.from({ length }, () => (Math.random() * 100).toFixed(2));
+            }
+
+            function createChart(ctx, labels, data, label) {
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: data,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Create chart instances
+            const tempCtx = document.getElementById('temperature-chart').getContext('2d');
+            const iceCtx = document.getElementById('ice-thickness-chart').getContext('2d');
+            const massCtx = document.getElementById('mass-balance-chart').getContext('2d');
+            const seaLevelCtx = document.getElementById('sea-level-chart').getContext('2d');
+            const precipCtx = document.getElementById('precipitation-chart').getContext('2d');
+            const albedoCtx = document.getElementById('albedo-chart').getContext('2d');
+            const streamflowCtx = document.getElementById('streamflow-chart').getContext('2d');
+            const meltPondsCtx = document.getElementById('melt-ponds-chart').getContext('2d');
+
+            // Labels
+            const tempLabels = Array.from({ length: 10 }, (_, i) => `Day ${i + 1}`);
+            const iceLabels = Array.from({ length: 10 }, (_, i) => `Month ${i + 1}`);
+            const massLabels = Array.from({ length: 10 }, (_, i) => `Year ${i + 1}`);
+            const seaLevelLabels = Array.from({ length: 10 }, (_, i) => `Year ${i + 1}`);
+            const precipLabels = Array.from({ length: 10 }, (_, i) => `Month ${i + 1}`);
+            const albedoLabels = Array.from({ length: 10 }, (_, i) => `Month ${i + 1}`);
+            const streamflowLabels = Array.from({ length: 10 }, (_, i) => `Day ${i + 1}`);
+            const meltPondsLabels = Array.from({ length: 10 }, (_, i) => `Month ${i + 1}`);
+
+            // Initialize charts
+            const tempChart = createChart(tempCtx, tempLabels, generateRandomData(10), 'Temperature (°C)');
+            const iceChart = createChart(iceCtx, iceLabels, generateRandomData(10), 'Ice Thickness (meters)');
+            const massChart = createChart(massCtx, massLabels, generateRandomData(10), 'Mass Balance (m w.e.)');
+            const seaLevelChart = createChart(seaLevelCtx, seaLevelLabels, generateRandomData(10), 'Sea Level Rise (mm)');
+            const precipChart = createChart(precipCtx, precipLabels, generateRandomData(10), 'Precipitation (mm)');
+            const albedoChart = createChart(albedoCtx, albedoLabels, generateRandomData(10), 'Albedo');
+            const streamflowChart = createChart(streamflowCtx, streamflowLabels, generateRandomData(10), 'Streamflow (cfs)');
+            const meltPondsChart = createChart(meltPondsCtx, meltPondsLabels, generateRandomData(10), 'Melt Ponds Area (sq km)');
+
+            // Update data every 5 seconds
+            function updateChart(chart, dataFunc, textElement, unit) {
+                setInterval(() => {
+                    const newData = dataFunc(10);
+                    chart.data.datasets[0].data = newData;
+                    chart.update();
+                    document.getElementById(textElement).innerText = `Data: ${newData.join(', ')} ${unit}`;
+
+                    // Check for risk and show alert if necessary
+                    if (checkDataForRisk(newData)) {
+                        showAlert('Dangerous data detected! Immediate action required.');
+                    }
+                }, 5000);
+            }
+
+            // Check for risk (example condition: any value > 90)
+            function checkDataForRisk(data) {
+                return data.some(value => parseFloat(value) > 98);
+            }
+
+            // Show alert function
+            function showAlert(message) {
+                const alertCard = document.getElementById('alert-card');
+                const alertMessage = document.getElementById('alert-message');
+                alertMessage.innerText = message;
+                alertCard.style.display = 'block';
+            }
+
+            document.getElementById('alert-close').addEventListener('click', function() {
+                document.getElementById('alert-card').style.display = 'none';
+            });
+
+            // Update charts
+            updateChart(tempChart, generateRandomData, 'temperature-text', '°C');
+            updateChart(iceChart, generateRandomData, 'ice-thickness-text', 'meters');
+            updateChart(massChart, generateRandomData, 'mass-balance-text', 'm w.e.');
+            updateChart(seaLevelChart, generateRandomData, 'sea-level-text', 'mm');
+            updateChart(precipChart, generateRandomData, 'precipitation-text', 'mm');
+            updateChart(albedoChart, generateRandomData, 'albedo-text', '');
+            updateChart(streamflowChart, generateRandomData, 'streamflow-text', 'cfs');
+            updateChart(meltPondsChart, generateRandomData, 'melt-ponds-text', 'sq km');
+        });
+    </script>
+</body>
+</html>

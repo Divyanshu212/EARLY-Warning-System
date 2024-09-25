@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mount Sleet Winter Tours</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+        }
+        
+        /* Header styling */
+        header {
+            width: 100%;
+            position: absolute;
+            z-index: 1;
+            left: 0px;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+      
+   .logo{
+    height: 130px;
+    width: 130px;
+    background-color: blue;
+    border-radius: 30px;
+    position: absolute;
+    z-index: 2;
+    top: 15px;
+    left: 50px;
+    text-align: center;
+    padding-top: 40px;
+    font-weight: bold;
+   }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 60px;
+        }
+
+        nav ul li {
+            margin: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #ff5e5e;
+        }
+
+        .login-btn {
+            color: red;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+       
+        .hero {
+            position: relative;
+            height: 85vh;
+            /* background: url('./backiee-83519.jpg') no-repeat center center/cover; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Darken the image */
+        }
+
+        .hero-content {
+            position: absolute;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .video1{
+            position: absolute;
+            top: 60px;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <h2>IceCube</h2>
+        <p>GLOFs</p>
+    </div>
+    <!-- Header Section -->
+    <header>
+       
+        
+        <nav>
+            <ul>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Gallary</a></li>
+                <li><a href="#">Trails</a></li>
+                <li><a href="#">News</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Help</a></li>
+                <li><a href="#" class="login-btn"><i class="fa-solid fa-user"></i> Log In</a></li>
+                
+            </ul>
+        </nav>
+        
+    </header>
+
+    <!-- Hero Section with Background -->
+    <section class="hero">
+        <video class="video1" src="./2871925-hd_1920_1080_30fps.mp4" autoplay loop muted></video>
+        <div class="hero-content">
+            <h1>Welcome to IceCube</h1>
+            <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, porro quas! Impedit voluptatibus, ab nemo ipsum quasi excepturi, commodi libero voluptatum, facilis sed itaque eum obcaecati. Assumenda blanditiis quis maiores! I'm a paragraph. Click here to add your own text and edit me. It's easy. Just click "Edit Text" to add your own content and make changes to the font.</p>
+            
+        </div>
+    </section>
+
+</body>
+</html>

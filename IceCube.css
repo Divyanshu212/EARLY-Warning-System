@@ -1,0 +1,493 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body, html {
+    height: 100%;
+}
+
+/* Header and logo */
+header {
+    width: 100%;
+    position: fixed;
+    z-index: 10;
+    left: 0px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(51, 51, 51, 0.8); /* semi-transparent */
+    color: white;
+}
+
+.logo {
+    height: 130px;
+    width: 150px;
+    border-radius: 30px;
+    position: fixed;
+    z-index: 15;
+    top: 15px;
+    left: 20px;
+    text-align: center;
+    padding-top: 30px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #fafafa;
+    background-color: rgba(255, 255, 255, 0.1);
+    animation: logoPop 1.5s ease;
+}
+
+@keyframes logoPop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ff5e5e;
+}
+
+/* Dropdown menu */
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    background-color: #333;
+    list-style-type: none;
+    padding: 10px 0;
+    width: 200px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown li {
+    padding: 10px 20px;
+}
+
+.dropdown li a {
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.dropdown li a:hover {
+    color: #ff5e5e;
+}
+
+/* Show dropdown on hover */
+nav ul li:hover .dropdown {
+    display: block;
+}
+
+.login-btn {
+    color: red;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Hero section */
+.hero {
+    position: relative;
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* overlay */
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.video1 {
+    position: absolute;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Footer section */
+/* General Footer Styles */
+.footer {
+    background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+    color: #f1f1f1;
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.footer .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex: 1;
+    padding: 20px;
+    margin: 20px;
+}
+
+.footer-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.footer-section h2::after {
+    content: '';
+    width: 50px;
+    height: 2px;
+    background: #ff5e5e;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.footer-section h2:hover::after {
+    width: 100px;
+}
+
+.footer .links, .footer .social {
+    list-style: none;
+    margin-top: 20px;
+    padding: 0;
+}
+
+.footer .links a, .footer .social a {
+    color: #f1f1f1;
+    text-decoration: none;
+    margin: 10px 0;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.footer .links a:hover, .footer .social a:hover {
+    color: #ff5e5e;
+}
+
+.footer .social a {
+    font-size: 2rem;
+    margin: 0 15px;
+    display: inline-block;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.footer .social a:hover {
+    transform: scale(1.2);
+}
+
+/* Button Styles */
+.footer .book-now {
+    background-color: #ff5e5e;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer .book-now:hover {
+    background-color: #e54e4e;
+    transform: translateY(-5px);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    background: #0a0a0a;
+    padding: 20px 0;
+    margin-top: 40px;
+    border-top: 1px solid #333;
+}
+
+.footer-bottom p {
+    margin: 0;
+    color: #999;
+    font-size: 0.875rem;
+}
+
+/* Adding Animations to Links */
+.footer .links a, .footer .social a {
+    position: relative;
+}
+
+.footer .links a::before, .footer .social a::before {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background: #ff5e5e;
+    transition: all 0.3s ease;
+}
+
+.footer .links a:hover::before, .footer .social a:hover::before {
+    width: 100%;
+    left: 0;
+}
+
+.footer .links a::before {
+    height: 1px;
+}
+
+/* Hover Background Animation */
+.footer .footer-content::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: radial-gradient(circle at center, rgba(255, 94, 94, 0.15), transparent);
+    transform: scale(0.9);
+    animation: pulse 5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(0.9);
+    }
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .logo {
+        height: 60px;
+        width: 60px;
+        font-size: 1rem;
+        padding-top: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    nav ul {
+        gap: 20px;
+    }
+
+    .footer .footer-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer .links, .footer .social {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .footer .book-now {
+        padding: 8px 16px;
+    }
+}
+/* Search Bar */
+.search-bar {
+    width: 400px;
+    margin-top: 20px;
+    margin-left: 550px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-bar input {
+    
+    padding: 10px;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    font-size: 1rem;
+}
+
+.search-bar button {
+    padding: 10px;
+    background-color: #d0b2f7;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.search-bar button i {
+    font-size: 1.2rem;
+}
+
+.search-bar button:hover {
+    background-color: #ff3333;
+}
+ 
+.container1 {
+    margin-left: 370px;
+    margin-bottom: 50px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 80px;
+    width:50%;
+    max-width: 1200px;
+}
+
+.card1 {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    overflow: hidden; /* Ensure image doesn't overflow card */
+}
+
+.card1 img {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px; /* Match card's border-radius */
+}
+
+.card1 h3 {
+    margin: 10px 0 0; /* Add margin to separate image from text */
+    color: #333;
+}
+
+.card1:hover {
+    background-color: #6ad3f0;
+    transform: scale(1.05);
+}
+
+#dataM1{
+        padding-top: 40px;
+        padding-bottom: 40px;
+    text-align: center;
+   font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+#imglayout2{
+    margin-top: 10px;
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 95%;
+    object-fit: cover;
+}
+
+#h111{
+    text-align: center;
+    color: #0056b3;
+    margin-bottom: 1.5rem;
+}
+
+.info-card {
+    background: #e0f7fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    color: #00796b;
+    margin-top: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

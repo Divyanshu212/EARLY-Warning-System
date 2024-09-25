@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topography Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1 1 calc(50% - 20px);
+            min-width: 280px;
+            box-sizing: border-box;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        #map {
+            height: 300px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .map-card {
+            flex: 1 1 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Topography Data</h1>
+    <div class="container">
+        <div class="card">
+            <h2>Elevation</h2>
+            <p id="elevation">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Terrain Features</h2>
+            <p id="terrainFeatures">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Contours</h2>
+            <p id="contours">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Landforms</h2>
+            <p id="landforms">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Slope</h2>
+            <p id="slope">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Hydrology</h2>
+            <p id="hydrology">Loading...</p>
+        </div>
+        <div class="map-card">
+            <h2>Map View</h2>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your Google Maps API key
+        const lat = 37.7749; // Latitude for San Francisco, adjust as needed
+        const lon = -122.4194; // Longitude for San Francisco, adjust as needed
+
+        // Fetch elevation data
+        function fetchElevation() {
+            fetch(`https://maps.googleapis.com/maps/api/elevation/json?locations=${lat},${lon}&key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results && data.results.length > 0) {
+                        const elevation = data.results[0].elevation;
+                        document.getElementById('elevation').textContent = `Elevation: ${elevation.toFixed(2)} meters`;
+                    } else {
+                        document.getElementById('elevation').textContent = 'Elevation data not available';
+                    }
+                })
+                .catch(error => console.error('Error fetching elevation data:', error));
+        }
+
+        // Placeholder functions for additional topography data
+        function fetchTerrainFeatures() {
+            // Placeholder for actual data fetch
+            document.getElementById('terrainFeatures').textContent = 'Mountains, valleys, plateaus, and plains.';
+        }
+
+        function fetchContours() {
+            // Placeholder for actual data fetch
+            document.getElementById('contours').textContent = 'Lines on a map representing the elevation change.';
+        }
+
+        function fetchLandforms() {
+            // Placeholder for actual data fetch
+            document.getElementById('landforms').textContent = 'Hills, ridges, and depressions.';
+        }
+
+        function fetchSlope() {
+            // Placeholder for actual data fetch
+            document.getElementById('slope').textContent = 'Steepness or degree of incline of a surface.';
+        }
+
+        function fetchHydrology() {
+            // Placeholder for actual data fetch
+            document.getElementById('hydrology').textContent = 'Information about rivers, lakes, and streams.';
+        }
+
+        // Initialize Google Maps
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat, lng: lon },
+                zoom: 10,
+            });
+
+            new google.maps.Marker({
+                position: { lat, lng: lon },
+                map,
+                title: 'Location'
+            });
+        }
+
+        // Load the Google Maps API
+        function loadGoogleMapsApi() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
+            script.async = true;
+            document.head.appendChild(script);
+        }
+
+        // Run functions
+        fetchElevation();
+        fetchTerrainFeatures();
+        fetchContours();
+        fetchLandforms();
+        fetchSlope();
+        fetchHydrology();
+        loadGoogleMapsApi();
+    </script>
+</body>
+</html>

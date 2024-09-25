@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .data-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="data-container">
+        <h1 id="card-title"></h1>
+        <p id="card-data"></p>
+        <button onclick="window.history.back()">Go Back</button>
+    </div>
+    <script>
+        // Map of data for each card
+        const dataMap = {
+            'weather-monitoring': 'Weather Monitoring data includes temperature, humidity, wind speed, etc.',
+            'topography-data': 'Topography Data includes elevation, terrain type, and landforms.',
+            'hydrological-data': 'Hydrological Data includes river flow rates, precipitation levels, and groundwater levels.',
+            'glacier-snowmelt': 'Glacier/Snowmelt Data includes snow accumulation and melting rates.',
+            'seismic-activity': 'Seismic Activity includes earthquake magnitudes, frequencies, and locations.',
+            'historical-flood': 'Historical Flood data includes past flood events and their impacts.',
+            'real-time-water-level': 'Real-time Water Level data includes current water levels in rivers and lakes.',
+            'satellite-images': 'Satellite Images include aerial views of the Earth\'s surface.',
+            'sar-model': 'SAR Model data includes synthetic aperture radar images and analysis.'
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const title = id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        
+        document.getElementById('card-title').textContent = title;
+        document.getElementById('card-data').textContent = dataMap[id] || 'No data available.';
+    </script>
+</body>
+</html>

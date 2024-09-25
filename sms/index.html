@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLOF Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GLOF Monitoring Dashboard</h1>
+        <div class="card">
+            <h2>Water Level</h2>
+            <p id="waterLevel">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Glacial Melt Rate</h2>
+            <p id="meltRate">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Iceberg Stability</h2>
+            <p id="icebergStability">Loading...</p>
+        </div>
+        <div class="card">
+            <h2>Risk Assessment</h2>
+            <p id="riskAssessment">Loading...</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simulate fetching false data
+            const waterLevel = Math.floor(Math.random() * 100); // Random value between 0 and 100
+            const meltRate = Math.floor(Math.random() * 10); // Random value between 0 and 10
+            const icebergStability = Math.floor(Math.random() * 10); // Random value between 0 and 10
+            const riskAssessment = waterLevel > 80 ? 'High' : 'Normal'; // Example risk assessment based on water level
+
+            document.getElementById('waterLevel').innerText = `${waterLevel} meters`;
+            document.getElementById('meltRate').innerText = `${meltRate} cm/day`;
+            document.getElementById('icebergStability').innerText = icebergStability > 7 ? 'Unstable' : 'Stable';
+            document.getElementById('riskAssessment').innerText = riskAssessment;
+
+            // Check if data indicates a dangerous situation
+            if (waterLevel > 80 || meltRate > 8 || icebergStability > 7) {
+                sendSMSAlert();
+            }
+        });
+
+        function sendSMSAlert() {
+            fetch('/send-alert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Alert: Dangerous GLOF conditions detected. Please take necessary precautions.',
+                    phone_number: 'YOUR_PHONE_NUMBER'
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log('SMS sent:', data))
+            .catch(error => console.error('Error sending SMS:', error));
+        }
+    </script>
+</body>
+</html>

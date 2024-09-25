@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moraine Erosion Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #63bee2;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            position: relative; /* Ensures alert card stays within the container */
+            z-index: 1; /* Makes sure alert card does not overlap the main content */
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+        }
+
+        .data {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 250px;
+        }
+
+        /* Alert Card Styling */
+        .alert-card {
+            position: fixed;
+            bottom: 20px; /* Position the alert card at the bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Keeps it above other content */
+            display: none; /* Initially hidden */
+            text-align: center;
+        }
+
+        .alert-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .alert-card p {
+            margin-bottom: 20px;
+        }
+
+        .alert-card #alert-close {
+            background: #721c24;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .alert-card #alert-close:hover {
+            background: #5c161a;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="erosion-rates">
+            <h2>Erosion Rates</h2>
+            <div class="data">Loading...</div>
+            <canvas id="erosionChart"></canvas>
+        </div>
+        <div class="card" id="sediment-yield">
+            <h2>Sediment Yield</h2>
+            <div class="data">Loading...</div>
+            <canvas id="sedimentChart"></canvas>
+        </div>
+        <div class="card" id="topographic-changes">
+            <h2>Topographic Changes</h2>
+            <div class="data">Loading...</div>
+            <canvas id="topographicChart"></canvas>
+        </div>
+        <div class="card" id="glacial-melt-rates">
+            <h2>Glacial Melt Rates</h2>
+            <div class="data">Loading...</div>
+            <canvas id="glacialMeltChart"></canvas>
+        </div>
+        <div class="card" id="soil-characteristics">
+            <h2>Soil and Sediment Characteristics</h2>
+            <div class="data">Loading...</div>
+            <canvas id="soilChart"></canvas>
+        </div>
+        <div class="card" id="vegetation-cover">
+            <h2>Vegetation Cover</h2>
+            <div class="data">Loading...</div>
+            <canvas id="vegetationChart"></canvas>
+        </div>
+        <div class="card" id="historical-data">
+            <h2>Historical Data</h2>
+            <div class="data">Loading...</div>
+            <canvas id="historicalChart"></canvas>
+        </div>
+    </div>
+
+    <div id="alert-card" class="alert-card">
+        <h2>Risk Alert!</h2>
+        <p id="alert-message">Dangerous data detected. Immediate action required!</p>
+        <button id="alert-close">Close</button>
+    </div>
+
+    <script>
+        // Function to generate random data
+        function getRandomData(length, min, max) {
+            return Array.from({ length }, () => Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+
+        // Function to format the theoretical data
+        function formatData(data) {
+            return data.map(value => value.toFixed(2)).join(', ');
+        }
+
+        // Function to create a chart with random data
+        function createChart(ctx, label, min, max, color) {
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023'],
+                    datasets: [ {
+                        label: label,
+                        data: getRandomData(4, min, max),
+                        backgroundColor: color,
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to update chart data and display heading with current theoretical values
+        function updateChart(chart, heading, min, max, element) {
+            const data = getRandomData(4, min, max);
+            chart.data.datasets[0].data = data;
+            chart.update();
+            element.textContent = `${heading}: ${formatData(data)}`;
+
+            // Check for risk and show alert if necessary
+            if (checkDataForRisk(data)) {
+                showAlert('Dangerous data detected! Immediate action required.');
+            }
+        }
+
+        // Check for risk (example condition: any value > 90)
+        function checkDataForRisk(data) {
+            return data.some(value => value > 1800);
+        }
+
+        // Show alert function
+        function showAlert(message) {
+            const alertCard = document.getElementById('alert-card');
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.innerText = message;
+            alertCard.style.display = 'block';
+        }
+
+        document.getElementById('alert-close').addEventListener('click', function() {
+            document.getElementById('alert-card').style.display = 'none';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const erosionCard = document.querySelector('#erosion-rates .data');
+            const sedimentCard = document.querySelector('#sediment-yield .data');
+            const topographicCard = document.querySelector('#topographic-changes .data');
+            const glacialMeltCard = document.querySelector('#glacial-melt-rates .data');
+            const soilCard = document.querySelector('#soil-characteristics .data');
+            const vegetationCard = document.querySelector('#vegetation-cover .data');
+            const historicalCard = document.querySelector('#historical-data .data');
+
+            // Create charts
+            const erosionChart = createChart(document.getElementById('erosionChart').getContext('2d'), 'Erosion Rates (cm/year)', 1, 10, 'rgba(255, 99, 132, 0.2)');
+            const sedimentChart = createChart(document.getElementById('sedimentChart').getContext('2d'), 'Sediment Yield (tons/year)', 1000, 2000, 'rgba(54, 162, 235, 0.2)');
+            const topographicChart = createChart(document.getElementById('topographicChart').getContext('2d'), 'Topographic Changes (m)', 5, 15, 'rgba(75, 192, 192, 0.2)');
+            const glacialMeltChart = createChart(document.getElementById('glacialMeltChart').getContext('2d'), 'Glacial Melt Rates (m/year)', 1, 3, 'rgba(153, 102, 255, 0.2)');
+            const soilChart = createChart(document.getElementById('soilChart').getContext('2d'), 'Soil Composition (%)', 0, 100, 'rgba(255, 159, 64, 0.2)');
+            const vegetationChart = createChart(document.getElementById('vegetationChart').getContext('2d'), 'Vegetation Cover (%)', 40, 80, 'rgba(255, 206, 86, 0.2)');
+            const historicalChart = createChart(document.getElementById('historicalChart').getContext('2d'), 'Historical Erosion (cm)', 40, 60, 'rgba(255, 99, 132, 0.2)');
+
+            // Update charts with new theoretical data every 5 seconds
+            setInterval(() => {
+                updateChart(erosionChart, 'Erosion Rates (cm/year)', 1, 10, erosionCard);
+                updateChart(sedimentChart, 'Sediment Yield (tons/year)', 1000, 2000, sedimentCard);
+                updateChart(topographicChart, 'Topographic Changes (m)', 5, 15, topographicCard);
+                updateChart(glacialMeltChart, 'Glacial Melt Rates (m/year)', 1, 3, glacialMeltCard);
+                updateChart(soilChart, 'Soil Composition (%)', 0, 100, soilCard);
+                updateChart(vegetationChart, 'Vegetation Cover (%)', 40, 80, vegetationCard);
+                updateChart(historicalChart, 'Historical Erosion (cm)', 40, 60, historicalCard);
+            }, 5000); // Update every 5 seconds
+        });
+    </script>
+</body>
+</html>

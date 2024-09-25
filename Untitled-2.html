@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Satellite Weather App</title>
+  <style>
+    * {
+      margin: 0;  
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #111, #333);
+      color: #fff;
+      transition: background 1s ease;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .weather-container {
+      display: flex;
+      flex-direction: row;
+      border-radius: 20px;
+      overflow: hidden;
+      width: 70%;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .weather-container:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .weather-info {
+      width: 40%;
+      padding: 40px;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 1s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .weather-info::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+
+    .weather-info > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .weather-input {
+      width: 60%;
+      padding: 40px;
+      background: #555;
+      border-radius: 0 20px 20px 0;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 15px;
+      border-radius: 5px;
+      border: none;
+      background: #ff6868;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #ff4d4d;
+    }
+
+    .details {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    .date-time {
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .satellite-img {
+      width: 100%;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="weather-container">
+      <div class="weather-info" id="weather-info">
+        <div class="weather-city">
+          <p id="city-country"></p>
+        </div>
+        <div class="date-time">
+          <p id="current-time"></p>
+          <p id="current-date"></p>
+        </div>
+        <img id="satellite-img" class="satellite-img" src="" alt="Satellite Image" />
+      </div>
+
+      <div class="weather-input">
+        <div class="input-group">
+          <input type="text" id="city-input" placeholder="Enter City Name" />
+          <button id="search-btn">Search</button>
+        </div>
+        <div class="details">
+          <p id="weather-name"></p>
+          <p id="weather-main"></p>
+          <p>Temp: <span id="weather-temp"></span>°C</p>
+          <p>Pressure: <span id="weather-pressure"></span> hPa</p>
+          <p>Wind Speed: <span id="weather-wind-speed"></span> m/s</p>
+          <p>Visibility: <span id="weather-visibility"></span> km</p>
+          <p>Topography: <span id="topography-data"></span> m</p>
+          <p>Hydrological Data: <span id="hydrological-data"></span></p>
+          <p>Glacier/Snowmelt: <span id="glacier-data"></span></p>
+          <p>Precipitation: <span id="precipitation-data"></span> mm</p>
+          <p>Seismic Activity: <span id="seismic-activity"></span></p>
+          <p>Historical Flood: <span id="historical-flood-data"></span></p>
+          <p>Real-time Water Level: <span id="water-level-data"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = 'h52IzWqzmD4f84tBWqrlbehCgcsaRzk9HChiKNq2';
+    const weatherApiKey = '4bf08d738152637dc0760b7d00532cef';
+    const sentinelHubApiKey = '6e119b19-b9f1-4a3b-a26f-6d67a865eef5N';
+    const cdoApiKey = 'YOUR_CDO_API_KEY';
+
+    function fetchWeatherByCity(city) {
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`;
+
+      if (city) {
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            updateWeatherInfo(data);
+            fetchSentinelHubImage(data.coord.lat, data.coord.lon);
+            fetchTopographyData(data.coord.lat, data.coord.lon);
+            fetchHydrologicalData();
+            fetchGlacierData();
+            fetchPrecipitationData();
+            fetchSeismicActivityData(data.coord.lat, data.coord.lon);
+            fetchHistoricalFloodData();
+            fetchRealTimeWaterLevelData();
+            document.getElementById('city-input').value = '';
+          })
+          .catch(error => console.log('Error:', error));
+      }
+    }
+
+    function updateWeatherInfo(data) {
+      document.getElementById('city-country').textContent = `${data.name}, ${data.sys.country}`;
+      document.getElementById('weather-name').textContent = data.weather[0].main;
+      document.getElementById('weather-temp').textContent = data.main.temp;
+      document.getElementById('weather-pressure').textContent = data.main.pressure;
+      document.getElementById('weather-wind-speed').textContent = data.wind.speed;
+      document.getElementById('weather-visibility').textContent = (data.visibility / 1000).toFixed(1);
+    }
+
+    function fetchSentinelHubImage(lat, lon) {
+      const sentinelHubUrl = `https://services.sentinel-hub.com/ogc/wms/YOUR_INSTANCE_ID?request=GetMap&layers=YOUR_LAYER_NAME&bbox=${lon-0.05},${lat-0.05},${lon+0.05},${lat+0.05}&width=800&height=600&format=image/png&api_key=${sentinelHubApiKey}`;
+
+      fetch(sentinelHubUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          document.getElementById('satellite-img').src = url;
+        })
+        .catch(err => console.error('Error fetching Sentinel Hub image:', err));
+    }
+
+    function fetchTopographyData(lat, lon) {
+      // Replace with actual API call for topographical data
+      const topographyData = 2000; // Example data
+      document.getElementById('topography-data').textContent = topographyData;
+    }
+
+    function fetchHydrologicalData() {
+      // Replace with actual API call for hydrological data
+      const hydrologicalData = "Moderate water flow"; // Example data
+      document.getElementById('hydrological-data').textContent = hydrologicalData;
+    }
+
+    function fetchGlacierData() {
+      // Replace with actual API call for glacier/snowmelt data
+      const glacierData = "Snowmelt observed"; // Example data
+      document.getElementById('glacier-data').textContent = glacierData;
+    }
+
+    function fetchPrecipitationData() {
+      // Replace with actual API call for precipitation data
+      const precipitationData = 15; // Example data in mm
+      document.getElementById('precipitation-data').textContent = precipitationData;
+    }
+
+    function fetchSeismicActivityData(lat, lon) {
+      const seismicUrl = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=100`;
+      
+      fetch(seismicUrl)
+        .then(response => response.json())
+        .then(data => {
+          const recentEarthquake = data.features[0]?.properties?.mag || 'No recent seismic activity';
+          document.getElementById('seismic-activity').textContent = recentEarthquake;
+        })
+        .catch(err => console.error('Error fetching seismic data:', err));
+    }
+
+    function fetchHistoricalFloodData() {
+      // Replace with actual API call for historical flood data
+      const floodData = "Flooding in 2021"; // Example data
+      document.getElementById('historical-flood-data').textContent = floodData;
+    }
+
+    function fetchRealTimeWaterLevelData() {
+      // Replace with actual API call for real-time water level monitoring
+      const waterLevelData = "3.5 meters"; // Example data
+      document.getElementById('water-level-data').textContent = waterLevelData;
+    }
+
+    document.getElementById('search-btn').addEventListener('click', () => {
+      const cityName = document.getElementById('city-input').value;
+      fetchWeatherByCity(cityName);
+    });
+  </script>
+</body>
+</html>
